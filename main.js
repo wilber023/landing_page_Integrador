@@ -1,7 +1,3 @@
-/**
- * Plataforma de Reconexión Humana - JavaScript
- * Funcionalidades interactivas para mejorar la experiencia del usuario
- */
 
 class ReconexionHumanaApp {
     constructor() {
@@ -22,9 +18,6 @@ class ReconexionHumanaApp {
         this.bindEvents();
     }
 
-    /**
-     * Inicializa las animaciones de scroll
-     */
     initScrollAnimations() {
         const observerOptions = {
             threshold: 0.15,
@@ -42,7 +35,6 @@ class ReconexionHumanaApp {
             });
         }, observerOptions);
 
-        // Observar elementos para animaciones
         const animatedElements = document.querySelectorAll(`
             .problem-card,
             .solution-card,
@@ -61,9 +53,6 @@ class ReconexionHumanaApp {
         });
     }
 
-    /**
-     * Inicializa animaciones escalonadas
-     */
     initStaggeredAnimations() {
         const staggeredElements = document.querySelectorAll('[data-delay]');
         
@@ -75,9 +64,6 @@ class ReconexionHumanaApp {
         });
     }
 
-    /**
-     * Inicializa el scroll suave para enlaces internos
-     */
     initSmoothScrolling() {
         document.querySelectorAll('a[href^="#"]').forEach(anchor => {
             anchor.addEventListener('click', (e) => {
@@ -97,9 +83,6 @@ class ReconexionHumanaApp {
         });
     }
 
-    /**
-     * Inicializa el menú móvil
-     */
     initMobileMenu() {
         const mobileToggle = document.querySelector('.mobile-menu-toggle');
         const navLinks = document.querySelector('.nav-links');
@@ -110,8 +93,6 @@ class ReconexionHumanaApp {
                 navLinks.classList.toggle('mobile-active');
                 document.body.classList.toggle('menu-open');
             });
-
-            // Cerrar menú al hacer clic en un enlace
             navLinks.querySelectorAll('a').forEach(link => {
                 link.addEventListener('click', () => {
                     mobileToggle.classList.remove('active');
@@ -122,24 +103,18 @@ class ReconexionHumanaApp {
         }
     }
 
-    /**
-     * Efectos de la barra de navegación
-     */
     initNavbarEffects() {
         const nav = document.querySelector('.nav');
         let lastScrollTop = 0;
 
         window.addEventListener('scroll', () => {
             const scrollTop = window.pageYOffset || document.documentElement.scrollTop;
-            
-            // Agregar clase cuando se hace scroll
+
             if (scrollTop > 50) {
                 nav.classList.add('scrolled');
             } else {
                 nav.classList.remove('scrolled');
             }
-
-            // Ocultar/mostrar nav en mobile al hacer scroll
             if (window.innerWidth <= 768) {
                 if (scrollTop > lastScrollTop && scrollTop > 100) {
                     nav.style.transform = 'translateY(-100%)';
@@ -152,9 +127,6 @@ class ReconexionHumanaApp {
         });
     }
 
-    /**
-     * Indicador de progreso de scroll
-     */
     initScrollIndicator() {
         const scrollIndicator = document.getElementById('scrollIndicator');
         
@@ -169,9 +141,6 @@ class ReconexionHumanaApp {
         }
     }
 
-    /**
-     * Botón volver al inicio
-     */
     initBackToTop() {
         const backToTopBtn = document.getElementById('backToTop');
         
@@ -195,9 +164,6 @@ class ReconexionHumanaApp {
         }
     }
 
-    /**
-     * Efecto de escritura para el título del hero
-     */
     initTypingEffect() {
         const heroTitle = document.querySelector('.hero-title');
         if (!heroTitle) return;
@@ -226,9 +192,6 @@ class ReconexionHumanaApp {
         }
     }
 
-    /**
-     * Función auxiliar para el efecto de escritura
-     */
     typeText(element, text, speed, callback) {
         let i = 0;
         const timer = setInterval(() => {
@@ -246,9 +209,6 @@ class ReconexionHumanaApp {
         }, speed);
     }
 
-    /**
-     * Animaciones de contadores para las métricas
-     */
     initCounterAnimations() {
         const counters = document.querySelectorAll('.metric-value, .stat-number');
         
@@ -277,7 +237,6 @@ class ReconexionHumanaApp {
                     if (!element.classList.contains('counted')) {
                         element.classList.add('counted');
                         
-                        // Detectar si es porcentaje
                         if (text.includes('%')) {
                             const number = parseInt(text.replace(/[^\d]/g, ''));
                             if (number) {
@@ -285,9 +244,7 @@ class ReconexionHumanaApp {
                                 setTimeout(() => countUp(element, number, '%'), 300);
                             }
                         }
-                        // Detectar si es "1 de 7"
                         else if (text.includes('de')) {
-                            // Mantener el texto original para casos especiales
                             element.style.opacity = '0';
                             setTimeout(() => {
                                 element.style.opacity = '1';
@@ -297,7 +254,6 @@ class ReconexionHumanaApp {
                                 }, 200);
                             }, 300);
                         }
-                        // Detectar rangos de edad
                         else if (text.includes('-') && text.includes('años')) {
                             element.style.opacity = '0';
                             setTimeout(() => {
@@ -318,9 +274,6 @@ class ReconexionHumanaApp {
         });
     }
 
-    /**
-     * Validación básica de formularios
-     */
     initFormValidation() {
         const forms = document.querySelectorAll('form');
         
@@ -338,8 +291,6 @@ class ReconexionHumanaApp {
                         input.classList.remove('error');
                         this.hideError(input);
                     }
-                    
-                    // Validación específica para email
                     if (input.type === 'email' && input.value) {
                         const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
                         if (!emailRegex.test(input.value)) {
@@ -356,10 +307,6 @@ class ReconexionHumanaApp {
             });
         });
     }
-
-    /**
-     * Mostrar mensaje de error
-     */
     showError(input, message) {
         let errorElement = input.nextElementSibling;
         
@@ -373,9 +320,6 @@ class ReconexionHumanaApp {
         errorElement.style.display = 'block';
     }
 
-    /**
-     * Ocultar mensaje de error
-     */
     hideError(input) {
         const errorElement = input.nextElementSibling;
         if (errorElement && errorElement.classList.contains('error-message')) {
@@ -383,30 +327,18 @@ class ReconexionHumanaApp {
         }
     }
 
-    /**
-     * Bindear eventos adicionales
-     */
     bindEvents() {
-        // Lazy loading para imágenes (si se agregan)
         this.initLazyLoading();
         
-        // Efecto parallax suave en hero
         this.initParallaxEffect();
         
-        // Manejo de resize de ventana
         window.addEventListener('resize', this.debounce(() => {
             this.handleResize();
         }, 250));
-
-        // Manejo de scroll para efectos adicionales
         window.addEventListener('scroll', this.throttle(() => {
             this.handleScroll();
         }, 16));
     }
-
-    /**
-     * Lazy loading para imágenes
-     */
     initLazyLoading() {
         const images = document.querySelectorAll('img[data-src]');
         
@@ -423,10 +355,6 @@ class ReconexionHumanaApp {
 
         images.forEach(img => imageObserver.observe(img));
     }
-
-    /**
-     * Efecto parallax suave
-     */
     initParallaxEffect() {
         const hero = document.querySelector('.hero');
         
@@ -441,33 +369,19 @@ class ReconexionHumanaApp {
             }
         });
     }
-
-    /**
-     * Manejo de resize de ventana
-     */
     handleResize() {
         const nav = document.querySelector('.nav');
-        
-        // Resetear estilos del nav en desktop
         if (window.innerWidth > 768) {
             nav.style.transform = 'translateY(0)';
         }
-        
-        // Ajustar animaciones para dispositivos móviles
         this.adjustForMobile();
     }
-    
-    /**
-     * Ajustes especiales para dispositivos móviles
-     */
     adjustForMobile() {
         const isMobile = window.innerWidth <= 768;
         const isTouch = 'ontouchstart' in window;
         
         if (isMobile || isTouch) {
             document.body.classList.add('mobile-device');
-            
-            // Desactivar animaciones complejas en móviles antiguos
             if (navigator.userAgent.match(/Android [1-4]\./)) {
                 document.body.classList.add('reduced-motion');
             }
@@ -475,18 +389,9 @@ class ReconexionHumanaApp {
             document.body.classList.remove('mobile-device');
         }
     }
-
-    /**
-     * Manejo de scroll adicional
-     */
     handleScroll() {
-        // Actualizar active link en navegación
         this.updateActiveNavLink();
     }
-
-    /**
-     * Actualizar enlace activo en navegación
-     */
     updateActiveNavLink() {
         const sections = document.querySelectorAll('section[id]');
         const navLinks = document.querySelectorAll('.nav-links a[href^="#"]');
@@ -508,10 +413,6 @@ class ReconexionHumanaApp {
             }
         });
     }
-
-    /**
-     * Debounce function
-     */
     debounce(func, wait) {
         let timeout;
         return function executedFunction(...args) {
@@ -523,10 +424,6 @@ class ReconexionHumanaApp {
             timeout = setTimeout(later, wait);
         };
     }
-
-    /**
-     * Throttle function
-     */
     throttle(func, limit) {
         let inThrottle;
         return function() {
@@ -541,29 +438,15 @@ class ReconexionHumanaApp {
     }
 }
 
-/**
- * Utilidades adicionales
- */
 class Utils {
-    /**
-     * Detectar si el usuario prefiere movimiento reducido
-     */
     static prefersReducedMotion() {
         return window.matchMedia && window.matchMedia('(prefers-reduced-motion: reduce)').matches;
     }
-
-    /**
-     * Añadir clase con delay
-     */
     static addClassWithDelay(element, className, delay = 0) {
         setTimeout(() => {
             element.classList.add(className);
         }, delay);
     }
-
-    /**
-     * Crear elemento con atributos
-     */
     static createElement(tag, attributes = {}, content = '') {
         const element = document.createElement(tag);
         
@@ -577,18 +460,11 @@ class Utils {
         
         return element;
     }
-
-    /**
-     * Generar ID único
-     */
     static generateId() {
         return Math.random().toString(36).substr(2, 9);
     }
 }
 
-/**
- * Accessibility Manager
- */
 class AccessibilityManager {
     constructor() {
         this.init();
@@ -635,7 +511,6 @@ class AccessibilityManager {
     }
 
     setupAriaLabels() {
-        // Añadir aria-labels automáticamente donde sea necesario
         const buttons = document.querySelectorAll('button:not([aria-label])');
         buttons.forEach(button => {
             if (!button.textContent.trim()) {
@@ -652,9 +527,6 @@ class AccessibilityManager {
     }
 }
 
-/**
- * Performance Monitor
- */
 class PerformanceMonitor {
     constructor() {
         this.init();
@@ -693,35 +565,19 @@ class PerformanceMonitor {
     }
 }
 
-/**
- * Inicializar aplicación cuando el DOM esté listo
- */
 document.addEventListener('DOMContentLoaded', () => {
-    // Detectar soporte de Intersection Observer
     if (!('IntersectionObserver' in window)) {
         document.body.classList.add('no-intersection-observer');
     }
-    
-    // Verificar si el usuario prefiere movimiento reducido
     if (Utils.prefersReducedMotion()) {
         document.body.classList.add('reduced-motion');
     }
-    
-    // Inicializar aplicación principal
     const app = new ReconexionHumanaApp();
-    
-    // Ajustes iniciales para móviles
     app.adjustForMobile();
-    
-    // Inicializar managers adicionales
     new AccessibilityManager();
-    
-    // Solo en desarrollo
     if (window.location.hostname === 'localhost' || window.location.hostname === '127.0.0.1') {
         new PerformanceMonitor();
     }
-    
-    // Precargar recursos críticos
     const criticalResources = [
         'https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap'
     ];
@@ -735,9 +591,6 @@ document.addEventListener('DOMContentLoaded', () => {
     });
 });
 
-/**
- * Service Worker para PWA (opcional)
- */
 if ('serviceWorker' in navigator) {
     window.addEventListener('load', () => {
         navigator.serviceWorker.register('/sw.js')
@@ -750,9 +603,6 @@ if ('serviceWorker' in navigator) {
     });
 }
 
-/**
- * Exportar clases para uso externo si es necesario
- */
 window.ReconexionHumana = {
     App: ReconexionHumanaApp,
     Utils: Utils,
