@@ -13,8 +13,11 @@ class ReconexionHumanaApp {
         this.initSmoothScrolling();
         this.initMobileMenu();
         this.initNavbarEffects();
+        this.initScrollIndicator();
+        this.initBackToTop();
         this.initTypingEffect();
         this.initCounterAnimations();
+        this.initStaggeredAnimations();
         this.initFormValidation();
         this.bindEvents();
     }
@@ -24,14 +27,17 @@ class ReconexionHumanaApp {
      */
     initScrollAnimations() {
         const observerOptions = {
-            threshold: 0.1,
+            threshold: 0.15,
             rootMargin: '0px 0px -50px 0px'
         };
 
         this.scrollObserver = new IntersectionObserver((entries) => {
             entries.forEach(entry => {
                 if (entry.isIntersecting) {
-                    entry.target.classList.add('visible');
+                    const delay = entry.target.dataset.delay || 0;
+                    setTimeout(() => {
+                        entry.target.classList.add('visible');
+                    }, delay);
                 }
             });
         }, observerOptions);
@@ -48,7 +54,23 @@ class ReconexionHumanaApp {
         `);
 
         animatedElements.forEach(el => {
-            el.classList.add('fade-in');
+            if (!el.classList.contains('fade-in') && !el.classList.contains('fade-in-up')) {
+                el.classList.add('fade-in');
+            }
+            this.scrollObserver.observe(el);
+        });
+    }
+
+    /**
+     * Inicializa animaciones escalonadas
+     */
+    initStaggeredAnimations() {
+        const staggeredElements = document.querySelectorAll('[data-delay]');
+        
+        staggeredElements.forEach(el => {
+            if (!el.classList.contains('fade-in') && !el.classList.contains('fade-in-up')) {
+                el.classList.add('fade-in');
+            }
             this.scrollObserver.observe(el);
         });
     }
@@ -131,6 +153,49 @@ class ReconexionHumanaApp {
     }
 
     /**
+     * Indicador de progreso de scroll
+     */
+    initScrollIndicator() {
+        const scrollIndicator = document.getElementById('scrollIndicator');
+        
+        if (scrollIndicator) {
+            window.addEventListener('scroll', () => {
+                const scrollTop = window.pageYOffset || document.documentElement.scrollTop;
+                const docHeight = document.documentElement.scrollHeight - document.documentElement.clientHeight;
+                const scrollPercent = (scrollTop / docHeight) * 100;
+                
+                scrollIndicator.style.width = scrollPercent + '%';
+            });
+        }
+    }
+
+    /**
+     * Botón volver al inicio
+     */
+    initBackToTop() {
+        const backToTopBtn = document.getElementById('backToTop');
+        
+        if (backToTopBtn) {
+            window.addEventListener('scroll', () => {
+                const scrollTop = window.pageYOffset || document.documentElement.scrollTop;
+                
+                if (scrollTop > 300) {
+                    backToTopBtn.classList.add('show');
+                } else {
+                    backToTopBtn.classList.remove('show');
+                }
+            });
+            
+            backToTopBtn.addEventListener('click', () => {
+                window.scrollTo({
+                    top: 0,
+                    behavior: 'smooth'
+                });
+            });
+        }
+    }
+
+    /**
      * Efecto de escritura para el título del hero
      */
     initTypingEffect() {
@@ -187,20 +252,20 @@ class ReconexionHumanaApp {
     initCounterAnimations() {
         const counters = document.querySelectorAll('.metric-value, .stat-number');
         
-        const countUp = (element, target) => {
-            const increment = target / 100;
+        const countUp = (element, target, suffix = '') => {
+            const increment = target / 50;
             let current = 0;
             
             const timer = setInterval(() => {
                 current += increment;
                 
                 if (current >= target) {
-                    element.textContent = target;
+                    element.textContent = target + suffix;
                     clearInterval(timer);
                 } else {
-                    element.textContent = Math.floor(current);
+                    element.textContent = Math.floor(current) + suffix;
                 }
-            }, 20);
+            }, 30);
         };
 
         const counterObserver = new IntersectionObserver((entries) => {
@@ -208,26 +273,45 @@ class ReconexionHumanaApp {
                 if (entry.isIntersecting) {
                     const element = entry.target;
                     const text = element.textContent.trim();
-                    const number = parseInt(text.replace(/[^\d]/g, ''));
                     
-                    if (number && !element.classList.contains('counted')) {
+                    if (!element.classList.contains('counted')) {
                         element.classList.add('counted');
-                        element.textContent = '0';
                         
-                        setTimeout(() => {
-                            if (text.includes('%')) {
-                                countUp(element, number);
-                                setTimeout(() => {
-                                    element.textContent = number + '%';
-                                }, 2000);
-                            } else {
-                                countUp(element, number);
+                        // Detectar si es porcentaje
+                        if (text.includes('%')) {
+                            const number = parseInt(text.replace(/[^\d]/g, ''));
+                            if (number) {
+                                element.textContent = '0%';
+                                setTimeout(() => countUp(element, number, '%'), 300);
                             }
-                        }, 200);
+                        }
+                        // Detectar si es "1 de 7"
+                        else if (text.includes('de')) {
+                            // Mantener el texto original para casos especiales
+                            element.style.opacity = '0';
+                            setTimeout(() => {
+                                element.style.opacity = '1';
+                                element.style.transform = 'scale(1.1)';
+                                setTimeout(() => {
+                                    element.style.transform = 'scale(1)';
+                                }, 200);
+                            }, 300);
+                        }
+                        // Detectar rangos de edad
+                        else if (text.includes('-') && text.includes('años')) {
+                            element.style.opacity = '0';
+                            setTimeout(() => {
+                                element.style.opacity = '1';
+                                element.style.transform = 'scale(1.1)';
+                                setTimeout(() => {
+                                    element.style.transform = 'scale(1)';
+                                }, 200);
+                            }, 300);
+                        }
                     }
                 }
             });
-        }, { threshold: 0.5 });
+        }, { threshold: 0.7 });
 
         counters.forEach(counter => {
             counterObserver.observe(counter);
@@ -367,6 +451,28 @@ class ReconexionHumanaApp {
         // Resetear estilos del nav en desktop
         if (window.innerWidth > 768) {
             nav.style.transform = 'translateY(0)';
+        }
+        
+        // Ajustar animaciones para dispositivos móviles
+        this.adjustForMobile();
+    }
+    
+    /**
+     * Ajustes especiales para dispositivos móviles
+     */
+    adjustForMobile() {
+        const isMobile = window.innerWidth <= 768;
+        const isTouch = 'ontouchstart' in window;
+        
+        if (isMobile || isTouch) {
+            document.body.classList.add('mobile-device');
+            
+            // Desactivar animaciones complejas en móviles antiguos
+            if (navigator.userAgent.match(/Android [1-4]\./)) {
+                document.body.classList.add('reduced-motion');
+            }
+        } else {
+            document.body.classList.remove('mobile-device');
         }
     }
 
@@ -591,14 +697,21 @@ class PerformanceMonitor {
  * Inicializar aplicación cuando el DOM esté listo
  */
 document.addEventListener('DOMContentLoaded', () => {
-    // Verificar si el usuario prefiere movimiento reducido
-    if (!Utils.prefersReducedMotion()) {
-        new ReconexionHumanaApp();
-    } else {
-        // Versión simplificada sin animaciones
-        document.body.classList.add('reduced-motion');
-        new ReconexionHumanaApp();
+    // Detectar soporte de Intersection Observer
+    if (!('IntersectionObserver' in window)) {
+        document.body.classList.add('no-intersection-observer');
     }
+    
+    // Verificar si el usuario prefiere movimiento reducido
+    if (Utils.prefersReducedMotion()) {
+        document.body.classList.add('reduced-motion');
+    }
+    
+    // Inicializar aplicación principal
+    const app = new ReconexionHumanaApp();
+    
+    // Ajustes iniciales para móviles
+    app.adjustForMobile();
     
     // Inicializar managers adicionales
     new AccessibilityManager();
@@ -607,6 +720,19 @@ document.addEventListener('DOMContentLoaded', () => {
     if (window.location.hostname === 'localhost' || window.location.hostname === '127.0.0.1') {
         new PerformanceMonitor();
     }
+    
+    // Precargar recursos críticos
+    const criticalResources = [
+        'https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap'
+    ];
+    
+    criticalResources.forEach(url => {
+        const link = document.createElement('link');
+        link.rel = 'preload';
+        link.as = 'style';
+        link.href = url;
+        document.head.appendChild(link);
+    });
 });
 
 /**
